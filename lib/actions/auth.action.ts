@@ -97,33 +97,49 @@ export async function signOut() {
 }
 
 // Get current user from session cookie
-export async function getCurrentUser():Promise<User | null> {
+export async function getCurrentUser(): Promise<User | null> {
   const cookieStore = await cookies();
+
   const sessionCookie = cookieStore.get("session")?.value;
-  if(!sessionCookie) return null;
-  try{
-const decodeClaims = await auth.verifySessionCookie(sessionCookie,true);
-const userRecord = await db.collection("users").doc(decodeClaims.uid).get();
-if(!userRecord.exists) return null;
-return{
-  ... userRecord.data(),
-  id: userRecord.id
-} as User
+  if (!sessionCookie) return null;
 
+  try {
+    const decodedClaims = await auth.verifySessionCookie(sessionCookie, true);
 
+    // get user info from db
+    const userRecord = await db
+      .collection("users")
+      .doc(decodedClaims.uid)
+      .get();
+    if (!userRecord.exists) return null;
 
+    return {
+      ...userRecord.data(),
+      id: userRecord.id,
+    } as User;
+  } catch (error) {
+    console.log(error);
+
+    // Invalid or expired session
+    return null;
   }
-  catch(e){
-    console.log(e)
-
-  }
-
-
 }
 
 // Check if user is authenticated
 export async function isAuthenticated() {
   const user = await getCurrentUser();
   return !!user;
-  // double exclamation mark se we can convert somethings existence into boolean
+}
+
+export async function getInterviewsByUserId(userId: string) {
+  const interviews = await db
+    .collection("interviews")
+    .where("userId", "==", userId)
+    .orderBy("createdAt", "desc")
+    .get();
+    return interviews.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+
+    })) as Interview[];
 }
