@@ -2,7 +2,7 @@ import  { ReactNode } from 'react'
 import "../globals.css"
 import Link from 'next/link'
 import Image from 'next/image'
-import { isAuthenticated } from '@/lib/actions/auth.action'
+import { isAuthenticated, signOut } from '@/lib/actions/auth.action'
 import { redirect } from 'next/navigation'
 
 const RootLayout = async ({children:children}:{children:ReactNode}) => {
@@ -20,6 +20,7 @@ const RootLayout = async ({children:children}:{children:ReactNode}) => {
         <h2 className='text-primary-100'>prepwise</h2>
         </Link>
     
+    <button onClick={signOut} className='btn-primary '>Logout</button>
 
    
       </nav>

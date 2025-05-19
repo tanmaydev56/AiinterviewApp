@@ -17,10 +17,15 @@ function initFirebaseAdmin() {
     });
   }
 
+
   return {
     auth: getAuth(),
     db: getFirestore(),
   };
 }
 
+
 export const { auth, db } = initFirebaseAdmin();
+  export const generateCustomToken = async (userId: string) => {
+  return getAuth().createCustomToken(userId);
+};

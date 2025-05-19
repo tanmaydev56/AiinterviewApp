@@ -94,6 +94,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
       toast.error(`There was an error: ${error}`);
     }
   };
+  
 
   const isSignIn = type === "sign-in";
 
